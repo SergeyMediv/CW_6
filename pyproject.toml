@@ -7,6 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+psycopg2-binary = "^2.9.9"
+psycopg2 = "^2.9.9"
+django-crontab = "^0.7.1"
+ipython = "^8.24.0"
+pytils = "^0.4.1"
+django = "4.2.2"
+redis = "^5.0.4"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
