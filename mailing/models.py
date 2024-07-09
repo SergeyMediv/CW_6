@@ -1,6 +1,7 @@
 from django.db import models
-
+from users.models import User
 from config import settings
+
 
 NULLABLE = {'null': 'True', 'blank': 'True'}
 
@@ -35,3 +36,48 @@ class Message(models.Model):
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
         ordering = ('theme',)
+
+
+class Mailing(models.Model):
+    """
+    Модель для хранения информации о рассылке
+    """
+
+    DAILY = "Раз в день"
+    WEEKLY = "Раз в неделю"
+    MONTHLY = "Раз в месяц"
+
+    PERIOD_CHOICES = [
+        (DAILY, "Раз в день"),
+        (WEEKLY, "Раз в неделю"),
+        (MONTHLY, "Раз в месяц"),
+    ]
+
+    CREATED = "Создана"
+    STARTED = "Запущена"
+    COMPLETED = "Завершена"
+
+    STATUS_CHOICES = [
+        (COMPLETED, "Завершена"),
+        (CREATED, "Создана"),
+        (STARTED, "Запущена"),
+    ]
+
+    name = models.CharField(max_length=150, verbose_name="Название")
+    description = models.TextField(**NULLABLE, verbose_name="Описание")
+    status = models.CharField(max_length=150, choices=STATUS_CHOICES, default=CREATED, verbose_name="Статус")
+    periodicity = models.CharField(
+        max_length=150,
+        choices=PERIOD_CHOICES,
+        default=DAILY,
+        verbose_name="Периодичность",
+    )
+    start_date = models.DateTimeField(
+        verbose_name="Дата начала",
+        **NULLABLE,
+    )
+    end_date = models.DateTimeField(verbose_name='Дата окончания', **NULLABLE, help_text='не обязательное поле')
+    next_send_time = models.DateTimeField(verbose_name='Время следующей отправки', **NULLABLE)
+    clients = models.ManyToManyField(Client, related_name='mailing', verbose_name='Клиенты рассылки')
+    message = models.ForeignKey(Message, verbose_name='Cообщение', on_delete=models.CASCADE, **NULLABLE)
+    owner = models.ForeignKey(User, verbose_name='Владелец',  on_delete=models.SET_NULL, **NULLABLE)
