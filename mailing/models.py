@@ -39,9 +39,6 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    """
-    Модель для хранения информации о рассылке
-    """
 
     DAILY = "Раз в день"
     WEEKLY = "Раз в неделю"
@@ -81,3 +78,42 @@ class Mailing(models.Model):
     clients = models.ManyToManyField(Client, related_name='mailing', verbose_name='Клиенты рассылки')
     message = models.ForeignKey(Message, verbose_name='Cообщение', on_delete=models.CASCADE, **NULLABLE)
     owner = models.ForeignKey(User, verbose_name='Владелец',  on_delete=models.SET_NULL, **NULLABLE)
+
+    def __str__(self):
+        return f"{self.name}, статус: {self.status}"
+
+    def save(self, *args, **kwargs):
+        if not self.next_send_time:
+            self.next_send_time = self.start_date
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Рассылка"
+        verbose_name_plural = "Рассылки"
+        ordering = ("name",)
+
+
+class Log(models.Model):
+
+    SUCCESS = 'Успешно'
+    FAIL = 'Неуспешно'
+    STATUS_CHOICES = [
+        (SUCCESS, 'Успешно'),
+        (FAIL, 'Неуспешно'),
+    ]
+
+    time = models.DateTimeField(
+        verbose_name="Дата и время попытки", auto_now_add=True
+    )
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, verbose_name='Cтатус')
+    server_response = models.CharField(
+        max_length=150, verbose_name="Ответ сервера почтового сервиса", **NULLABLE
+    )
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка")
+
+    def __str__(self):
+        return f"{self.mailing} {self.time} {self.status} {self.server_response}"
+
+    class Meta:
+        verbose_name = "Попытка рассылки"
+        verbose_name_plural = "Попытки рассылки"
