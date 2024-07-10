@@ -1,10 +1,18 @@
-<h4>Меню</h4>
+<h2>Меню</h2>
 <ul class="list-unstyled">
+    {% if user.is_authenticated %}
     <li><a href="#" class="text-black">Главная</a></li>
-    <li><a href="#" class="text-black">Каталог</a></li>
-    <li><a href="#" class="text-black">Контакты</a></li>
+    <li><a href="/list" class="text-black">Клиенты</a></li>
+    <li><a href="#" class="text-black">Расслыки</a></li>
+    <li><a href="#" class="text-black">Журнал рассылок</a></li>
     <li><a href="#" class="text-black">Блог</a></li>
     <hr>
+    {% else %}
+    <p class="h5 card-text">Сервис для управления рассылками</p>
+    <p class="h5 card-text">Авторизуйтесь для начала работы</p>
+    <li><a href="#" class="text-black">Блог</a></li>
+    <hr>
+    {% endif %}
 
     {% if user.is_authenticated %}
     <form method="post" action="{% url 'users:logout' %}">
