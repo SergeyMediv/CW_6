@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from mailing.models import Message
+from mailing.models import Mailing
 
 
 class HomeView(TemplateView):
@@ -12,5 +12,5 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['object_list'] = Message.objects.all()
+        context_data['object_list'] = Mailing.objects.all()
         return context_data
