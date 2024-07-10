@@ -1,22 +1,25 @@
 {% extends 'mailing/base.html' %}
 
 {% block content %}
-<form method="post" class="row">
-    <div class="col-6">
-        <div class="card shadow-sm">
-            <div class="card-header h3">
-                Авторизация
-            </div>
-            <div class="card-body">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-success">
-                    Войти
-                </button>
+<div class="container">
+    <form method="post" action="{% url 'users:password_res' %}" enctype="multipart/form-data" class="form-floating">
+        {% csrf_token %}
+        <div class="row text-start">
+            <div class="col-lg-3 col-md-6 col-sm-12 mx-auto">
+                <div class="card mb-4 box-shadow mx-auto">
+                    <div class="card-header text-center">
+                        <h4 class="my-0 font-weight-normal">Авторизация</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success">
+                            Войти
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 {% endblock %}
-
-
