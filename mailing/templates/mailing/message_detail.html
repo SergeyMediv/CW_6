@@ -2,24 +2,25 @@
 {% block content %}
 <section class="text-center">
     <div class="container">
-        <h1>В данный момент на сайте</h1>
+        <h1>Просмотр сообщения</h1>
     </div>
 </section>
-<br>
 <div class="container">
     <div class="col-12">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <p class="h5 card-text">Клиентов: {{ active_clients }}</p>
-                        <p class="h5 card-text">Активных рассылок: {{ active_mailings }}</p>
-                        <p class="h5 card-text">Всего рассылок: {{ all_mailings }}</p>
+                        <p class="card-text">Тема: {{ message.theme }}</p>
+                        <p class="card-text">Текст: {{ message.text }}</p>
+                        <p class="card-text">Добавлено: {{ message.owner }}</p>
+                        <a class="btn btn-primary" href="{% url 'mailing:message_list' %}" role="button">Назад</a>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<br>
+
 {% endblock %}

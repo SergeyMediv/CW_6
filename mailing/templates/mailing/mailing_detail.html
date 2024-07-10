@@ -1,0 +1,36 @@
+{% extends 'mailing/base.html'%}
+{% block content %}
+<section class="text-center">
+    <div class="container">
+        <h1>Просмотр сообщения</h1>
+    </div>
+</section>
+<div class="container">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">Название: {{ mailing.name }}</p>
+                        <p class="card-text">Описание: {{ mailing.description }}</p>
+                        <p class="card-text">Статус: {{ mailing.status }}</p>
+                        <p class="card-text">Периодичность: {{ mailing.periodicity }}</p>
+                        <p class="card-text">Дата начала: {{ mailing.start_date }}</p>
+                        <p class="card-text">Дата окончания: {{ mailing.end_date }}</p>
+                        <p class="card-text">Время следующей отправки: {{ mailing.next_send_time }}</p>
+                        <p class="card-text">Тема сообщения: {{ mailing.message }}</p>
+                        <p class="card-text">Автор: {{ mailing.owner }}</p><br>
+                        <p class="card-text h5">Клиенты рассылки: </p>
+                        {% for client in mailing.clients.all %}
+                        <p class="card-text"> {{ client.email }}</p>
+                        {% endfor %}
+                        <a class="btn btn-primary" href="{% url 'mailing:mailing_list' %}" role="button">Назад</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
