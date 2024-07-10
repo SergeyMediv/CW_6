@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mailing.forms import ClientForm, MessageForm
+from mailing.forms import ClientForm, MessageForm, MailingForm
 from mailing.models import Mailing, Client, Message
 
 
@@ -79,7 +79,9 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form = MessageForm
     form_class = MessageForm
-    success_url = reverse_lazy('mailing:message_list')
+
+    def get_success_url(self):
+        return reverse('mailing:message_view', args=[self.kwargs.get('pk')])
 
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
@@ -89,3 +91,39 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     success_url = reverse_lazy('mailing:message_list')
+
+
+class MailingListView(LoginRequiredMixin, ListView):
+    model = Mailing
+
+
+class MailingCreateView(LoginRequiredMixin, CreateView):
+    model = Mailing
+    form = MailingForm
+    form_class = MailingForm
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        message = form.save()
+        user = self.request.user
+        message.owner = user
+        message.save()
+        return super().form_valid(form)
+
+
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
+    model = Mailing
+    form = MailingForm
+    form_class = MailingForm
+
+    def get_success_url(self):
+        return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
+
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
+    model = Mailing
+
+
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
+    model = Mailing
+    success_url = reverse_lazy('mailing:mailing_list')

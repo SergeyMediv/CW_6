@@ -5,7 +5,8 @@ from config import settings
 from mailing.apps import MailingConfig
 from mailing.views import (HomeView, ClientListView, ClientUpdateView, ClientCreateView, ClientDeleteView,
                            ClientDetailView, MessageListView, MessageUpdateView, MessageCreateView, MessageDeleteView,
-                           MessageDetailView)
+                           MessageDetailView, MailingListView, MailingUpdateView, MailingCreateView, MailingDeleteView,
+                           MailingDetailView)
 
 app_name = MailingConfig.name
 
@@ -21,5 +22,10 @@ urlpatterns = [
     path('message_create/', MessageCreateView.as_view(), name='message_create'),
     path('message_delete/<int:pk>', MessageDeleteView.as_view(), name='message_delete'),
     path('message_view/<int:pk>', MessageDetailView.as_view(), name='message_view'),
+    path('mailing_list/', MailingListView.as_view(), name='mailing_list'),
+    path('mailing_update/<int:pk>', MailingUpdateView.as_view(), name='mailing_update'),
+    path('mailing_create/', MailingCreateView.as_view(), name='mailing_create'),
+    path('mailing_delete/<int:pk>', MailingDeleteView.as_view(), name='mailing_delete'),
+    path('mailing_view/<int:pk>', MailingDetailView.as_view(), name='mailing_view'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
