@@ -3,8 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mailing.forms import ClientForm
-from mailing.models import Mailing, Client
+from mailing.forms import ClientForm, MessageForm
+from mailing.models import Mailing, Client, Message
 
 
 class HomeView(TemplateView):
@@ -55,3 +55,37 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('mailing:client_list')
+
+
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
+    model = Message
+    form = MessageForm
+    form_class = MessageForm
+    success_url = reverse_lazy('mailing:message_list')
+
+    def form_valid(self, form):
+        message = form.save()
+        user = self.request.user
+        message.owner = user
+        message.save()
+        return super().form_valid(form)
+
+
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
+    model = Message
+    form = MessageForm
+    form_class = MessageForm
+    success_url = reverse_lazy('mailing:message_list')
+
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+
+
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
+    model = Message
+    success_url = reverse_lazy('mailing:message_list')
