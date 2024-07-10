@@ -22,4 +22,13 @@
     </div>
 </div>
 <br>
+
+{% if user.is_authenticated %}
+<div class="container">
+
+        <a class="btn btn-primary mb-7" href="{% url 'mailing:client_create' %}">Добавить клиента</a>
+        <a class="btn btn-primary mb-7" href="{% url 'mailing:mailing_create' %}">Добавить рассылку</a>
+        <a class="btn btn-primary mb-7" href="{% url 'mailing:message_create' %}">Добавить сообщение</a>
+</div><br>
+{% endif %}
 {% endblock %}
