@@ -15,8 +15,8 @@ class Command(BaseCommand):
             clients = mailing.clients.all()
             try:
                 server_response = send_mail(
-                    subject=mailing.message.title,
-                    message=mailing.message.message,
+                    subject=mailing.message.theme,
+                    message=mailing.message.text,
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[client.email for client in clients],
                     fail_silently=False,

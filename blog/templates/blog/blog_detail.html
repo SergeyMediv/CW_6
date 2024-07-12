@@ -1,0 +1,27 @@
+{% extends 'mailing/base.html'%}
+{% block content %}
+<section class="text-center">
+    <div class="container">
+        <h1>Просмотр статьи</h1>
+    </div>
+</section>
+<div class="container">
+    <div class="col-12">
+        <img src="{{ blog.image | mymedia }}" class="card-img-top">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">Заголовок: {{ blog.title }}</p>
+                        <p class="card-text">Содержание: {{ blog.content }}</p>
+                        <p class="card-text">Дата добавления: {{ blog.created_at }}</p>
+                        <p class="card-text">Просмотры: {{ blog.views_count }}</p>
+                        <a class="btn btn-primary" href="{% url 'blog:blog_list' %}" role="button">Назад</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
