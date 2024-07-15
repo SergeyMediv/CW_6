@@ -1,10 +1,12 @@
 import secrets
 import random
 
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, FormView
+from django.views.generic import CreateView, FormView, ListView, DetailView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm, PasswordResetForm
@@ -61,3 +63,23 @@ class PasswordResetView(FormView):
     template_name = 'password_reset.html'
     form_class = PasswordResetForm
     success_url = reverse_lazy('users:login')
+
+
+class UserListView(PermissionRequiredMixin, ListView):
+    model = User
+    permission_required = 'users.view_all_users'
+
+
+@permission_required('users.deactivate_user')
+def toggle_activity(request, pk):
+    user = User.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(reverse('users:user_list'))
+
+
+class UserDetailView(PermissionRequiredMixin, DetailView):
+    model = User

@@ -7,6 +7,9 @@
     <li><a href="/mailing_list" class="text-black">Расслыки</a></li>
     <li><a href="/log_list" class="text-black">Журнал рассылок</a></li>
     <li><a href="/blog/blog_list" class="text-black">Блог</a></li>
+    {% if perms.users.view_all_users or user.is_superuser %}
+    <li><a href="/users/user_list" class="text-black">Список пользователей</a></li>
+    {% endif %}
     <hr>
     {% else %}
     <p class="h5 card-text">Сервис для управления рассылками</p>

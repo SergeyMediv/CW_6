@@ -31,4 +31,25 @@
         <a class="btn btn-primary mb-7" href="{% url 'mailing:message_create' %}">Добавить сообщение</a>
 </div><br>
 {% endif %}
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            {% for object in random_blogs %}
+            <div class="col-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">
+                        <h2>{{ object.title}}</h2>
+                        <p class="card-text">Содержание: {{ object.body }}</p>
+                        <p class="card-text"> Создана {{ object.created_at }}</p>
+                        <p class="card-text">Просмотры- {{ object.views_count }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
