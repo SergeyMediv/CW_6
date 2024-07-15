@@ -1,10 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from blog.services import get_articles_from_cache
-from mailing.forms import ClientForm, MessageForm, MailingForm
+from mailing.forms import ClientForm, MessageForm, MailingForm, ManagerMailingForm
 from mailing.models import Mailing, Client, Message, Log
 
 
@@ -29,9 +30,22 @@ class HomeView(TemplateView):
 class ClientListView(LoginRequiredMixin, ListView):
     model = Client
 
+    def get_queryset(self, queryset=None):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser and not user.groups.filter(name='manager'):
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
+
 
 class ClientDetailView(LoginRequiredMixin, DetailView):
     model = Client
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
 
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
@@ -52,16 +66,37 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
     form = ClientForm
     form_class = ClientForm
-    success_url = reverse_lazy('mailing:client_list')
+
+    def get_success_url(self):
+        return reverse('mailing:client_list', args=[self.kwargs.get('pk')])
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
 
 
 class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('mailing:client_list')
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
+
 
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
+
+    def get_queryset(self, queryset=None):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser and not user.groups.filter(name='manager'):
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
 
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
@@ -86,18 +121,43 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('mailing:message_view', args=[self.kwargs.get('pk')])
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
+
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
 
 
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     success_url = reverse_lazy('mailing:message_list')
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
+
 
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
+
+    def get_queryset(self, queryset=None):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser and not user.groups.filter(name='manager'):
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -122,14 +182,37 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            return MailingForm
+        elif user.has_perm('mailing.deactivate_mailing'):
+            return ManagerMailingForm
+        else:
+            raise PermissionDenied
+
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        user = self.request.user
+        if not user.is_superuser and not user.groups.filter(name='manager') and user != self.object.owner:
+            raise PermissionDenied
+        else:
+            return self.object
 
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     success_url = reverse_lazy('mailing:mailing_list')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
 
 
 class LogListView(LoginRequiredMixin, ListView):
