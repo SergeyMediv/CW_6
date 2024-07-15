@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from blog.services import get_articles_from_cache
 from mailing.forms import ClientForm, MessageForm, MailingForm
 from mailing.models import Mailing, Client, Message, Log
 
@@ -20,6 +21,8 @@ class HomeView(TemplateView):
         context_data['all_mailings'] = mailings.count()
         context_data['active_mailings'] = mailings.filter(status=Mailing.STARTED).count()
         context_data['active_clients'] = clients.values('email').distinct().count()
+
+        context_data['random_blogs'] = get_articles_from_cache().order_by('?')[:3]
         return context_data
 
 

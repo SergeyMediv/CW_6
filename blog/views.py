@@ -3,6 +3,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
 from blog.models import Blog
+from blog.services import get_articles_from_cache
 
 
 class BlogCreateView(LoginRequiredMixin, CreateView):
@@ -19,8 +20,7 @@ class BlogListView(ListView):
     }
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset.filter(is_published=True)
+        queryset = get_articles_from_cache().filter(is_published=True)
         return queryset
 
 

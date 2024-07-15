@@ -1,0 +1,39 @@
+{% extends 'mailing/base.html'%}
+{% block content %}
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for user in object_list %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <p class="h4 card-text">{{ user.email }}</p>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Почта: {{ user.email }}</p>
+                        <p class="card-text">Активность: {{ user.is_active }}</p>
+                        <p class="card-text">Статус персонала: {{ user.is_staff }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn btn-primary" href="{% url 'users:user_detail' user.pk %}"
+                                   role="button">Просмотр</a>
+                                {% if perms.users.deactivate_user %}
+                                {% if user.is_active %}
+                                <a class="btn btn-outline-danger" href="{% url 'users:toggle_activity' user.pk %}"
+                                   role="button">Деактивировать</a>
+                                {% else %}
+                                <a class="btn btn-outline-success" href="{% url 'users:toggle_activity' user.pk %}"
+                                   role="button">Активировать</a>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
