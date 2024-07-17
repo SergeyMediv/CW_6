@@ -9,12 +9,6 @@ from django.conf import settings
 from mailing.models import Mailing, Log
 
 
-# def send():
-#     perem = send_mail(subject='hello', message='123', from_email=settings.EMAIL_HOST_USER,
-#                       recipient_list=['mirkulok@yandex.ru'])
-#     print('hello')
-
-
 def start_mail():
     zone = pytz.timezone(settings.TIME_ZONE)
     current_datetime = datetime.now(zone)
